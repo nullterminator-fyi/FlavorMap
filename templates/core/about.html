@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - FlavorMap{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+    
+    <div style="background-color: #f9f9f9; padding: 2rem; border-radius: 8px; margin: 2rem 0;">
+        <p>{{ about_text }}</p>
+    </div>
+    
+    <h3>Our Mission</h3>
+    <p>We believe that sharing honest reviews and ratings helps people make better dining choices. FlavorMap connects food lovers and helps them discover culinary gems in their community.</p>
+    
+    <h3>Why Choose FlavorMap?</h3>
+    <ul style="margin: 1rem 0 1rem 2rem; line-height: 2;">
+        <li>Browse hundreds of restaurants with real ratings and reviews</li>
+        <li>Share your dining experiences with the community</li>
+        <li>Discover new cuisines and hidden gems</li>
+        <li>Get detailed information about restaurants including location, phone, and hours</li>
+        <li>Join a community of passionate food enthusiasts</li>
+    </ul>
+{% endblock %}

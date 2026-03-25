@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FlavorMap - Restaurant Reviews{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+        
+        header {
+            background-color: #d32f2f;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 0.5rem;
+        }
+        
+        nav {
+            background-color: #c62828;
+            padding: 1rem 0;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        
+        nav a:hover {
+            opacity: 0.8;
+        }
+        
+        main {
+            min-height: calc(100vh - 300px);
+            padding: 2rem 0;
+        }
+        
+        .content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #d32f2f;
+            margin-bottom: 1.5rem;
+            font-size: 1.8em;
+        }
+        
+        h3 {
+            color: #c62828;
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1.3em;
+        }
+        
+        .restaurant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .restaurant-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .restaurant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .restaurant-name {
+            font-size: 1.3em;
+            color: #d32f2f;
+            margin-bottom: 0.5rem;
+        }
+        
+        .restaurant-info {
+            font-size: 0.9em;
+            color: #666;
+            margin: 0.5rem 0;
+        }
+        
+        .rating {
+            color: #ff9800;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #d32f2f;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: #c62828;
+        }
+        
+        .featured-section {
+            background-color: #fff3e0;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        footer p {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🍽️ FlavorMap</h1>
+            <p>Discover Amazing Restaurants Near You</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="{% url 'core:home' %}">Home</a></li>
+                <li><a href="{% url 'core:restaurant_list' %}">Restaurants</a></li>
+                <li><a href="{% url 'core:about' %}">About</a></li>
+                <li><a href="{% url 'core:contact' %}">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <main>
+        <div class="container">
+            <div class="content">
+                {% block content %}
+                <!-- Content goes here -->
+                {% endblock %}
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2026 FlavorMap. All rights reserved.</p>
+        <p>Helping you find your next favorite restaurant.</p>
+    </footer>
+</body>
+</html>

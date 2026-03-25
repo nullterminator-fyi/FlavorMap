@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - FlavorMap{% endblock %}
+
+{% block content %}
+    {% if restaurant.id %}
+        <h2>{{ restaurant.name }}</h2>
+        
+        <div class="restaurant-info" style="margin: 2rem 0; padding: 1.5rem; background-color: #f9f9f9; border-radius: 8px;">
+            <p><strong>Cuisine Type:</strong> {{ restaurant.cuisine }}</p>
+            <p><strong>Location:</strong> {{ restaurant.location }}</p>
+            <p><strong>Address:</strong> {{ restaurant.address }}</p>
+            <p><strong>Phone:</strong> <a href="tel:{{ restaurant.phone }}" style="color: #d32f2f; text-decoration: none;">{{ restaurant.phone }}</a></p>
+            {% if restaurant.email %}
+                <p><strong>Email:</strong> <a href="mailto:{{ restaurant.email }}" style="color: #d32f2f; text-decoration: none;">{{ restaurant.email }}</a></p>
+            {% endif %}
+            {% if restaurant.website %}
+                <p><strong>Website:</strong> <a href="{{ restaurant.website }}" target="_blank" style="color: #d32f2f; text-decoration: none;">{{ restaurant.website }}</a></p>
+            {% endif %}
+            <p style="margin-top: 1rem;"><span class="rating" style="font-size: 1.3em;">★ {{ restaurant.average_rating }}/5</span></p>
+        </div>
+        
+        <h3>About</h3>
+        <p>{{ restaurant.description }}</p>
+        
+        <h3>Reviews ({{ reviews.count }})</h3>
+        {% if reviews %}
+            <div style="margin: 2rem 0;">
+                {% for review in reviews %}
+                    <div style="padding: 1.5rem; margin-bottom: 1rem; background-color: #f9f9f9; border-left: 4px solid #d32f2f; border-radius: 4px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <div>
+                                <strong>{{ review.title }}</strong>
+                                <div style="font-size: 0.9em; color: #666; margin-top: 0.25rem;">
+                                    by <em>{{ review.user.username }}</em>
+                                </div>
+                            </div>
+                            <span class="rating">★ {{ review.rating }}/5</span>
+                        </div>
+                        <p style="margin: 1rem 0;">{{ review.text }}</p>
+                        <small style="color: #999;">{{ review.created_at|date:"M d, Y" }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: #999; font-style: italic;">No reviews yet. Be the first to review this restaurant!</p>
+        {% endif %}
+        
+        <div style="margin-top: 2rem;">
+            <a href="{% url 'core:restaurant_list' %}" class="btn">Back to Restaurants</a>
+        </div>
+    {% else %}
+        <h2>{{ restaurant.name }}</h2>
+        <p>Sorry, the restaurant you're looking for could not be found.</p>
+        <a href="{% url 'core:restaurant_list' %}" class="btn">Back to Restaurants</a>
+    {% endif %}
+{% endblock %}
