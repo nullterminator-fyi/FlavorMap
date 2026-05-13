@@ -4,29 +4,50 @@
 
 {% block content %}
     <h2>{{ message }}</h2>
-    
+    <p>Explore our curated selection of restaurants and share your own dining experiences.</p>
+
     <div class="featured-section">
-        <h3>Featured Restaurants</h3>
+        <h3>⭐ Top Rated Restaurants</h3>
         <div class="restaurant-grid">
-            {% for restaurant in featured_restaurants %}
+            {% for restaurant in top_rated %}
                 <div class="restaurant-card">
+                    {% if restaurant.photo %}
+                        <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="thumb">
+                    {% endif %}
                     <div class="restaurant-name">{{ restaurant.name }}</div>
-                    <div class="restaurant-info">
-                        <strong>Cuisine:</strong> {{ restaurant.cuisine }}
-                    </div>
-                    <div class="restaurant-info">
-                        <strong>Location:</strong> {{ restaurant.location }}
-                    </div>
+                    <div class="restaurant-info"><strong>Cuisine:</strong> {{ restaurant.cuisine }}</div>
+                    <div class="restaurant-info"><strong>Location:</strong> {{ restaurant.location }}</div>
                     <div class="restaurant-info">
                         <span class="rating">★ {{ restaurant.average_rating }}/5</span>
+                        ({{ restaurant.review_count }})
                     </div>
                     <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn">View Details</a>
                 </div>
             {% empty %}
-                <p>No restaurants available yet. Check back soon!</p>
+                <p>No rated restaurants yet.</p>
             {% endfor %}
         </div>
     </div>
-    
-    <p>Explore our curated selection of restaurants and share your own dining experiences. Rate, review, and discover the best places to eat in your area.</p>
+
+    <div class="featured-section" style="background-color: #e3f2fd;">
+        <h3>🆕 Newest Additions</h3>
+        <div class="restaurant-grid">
+            {% for restaurant in newest %}
+                <div class="restaurant-card">
+                    {% if restaurant.photo %}
+                        <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="thumb">
+                    {% endif %}
+                    <div class="restaurant-name">{{ restaurant.name }}</div>
+                    <div class="restaurant-info"><strong>Cuisine:</strong> {{ restaurant.cuisine }}</div>
+                    <div class="restaurant-info"><strong>Location:</strong> {{ restaurant.location }}</div>
+                    <div class="restaurant-info">
+                        Added {{ restaurant.created_at|date:"M d, Y" }}
+                    </div>
+                    <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn">View Details</a>
+                </div>
+            {% empty %}
+                <p>No restaurants yet.</p>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

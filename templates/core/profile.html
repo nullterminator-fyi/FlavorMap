@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - FlavorMap{% endblock %}
+
+{% block content %}
+    <h2>{{ user.username }}'s Profile</h2>
+
+    <div style="display: grid; grid-template-columns: 200px 1fr; gap: 2rem; margin-bottom: 2rem;">
+        <div>
+            {% if profile_obj.avatar %}
+                <img src="{{ profile_obj.avatar.url }}" alt="avatar" style="width:200px; height:200px; object-fit:cover; border-radius:50%;">
+            {% else %}
+                <div style="width:200px; height:200px; background:#eee; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:4em; color:#999;">👤</div>
+            {% endif %}
+        </div>
+        <div>
+            <h3>About me</h3>
+            <p>{{ profile_obj.bio|default:"No bio yet. Edit your profile to add one." }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Member since:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+        </div>
+    </div>
+
+    <h3>Edit Profile</h3>
+    <form method="post" enctype="multipart/form-data" style="margin-bottom: 2rem; padding:1.5rem; background:#f9f9f9; border-radius:8px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Save Profile</button>
+    </form>
+
+    <h3>My Reviews ({{ user_reviews.count }})</h3>
+    {% if user_reviews %}
+        {% for review in user_reviews %}
+            <div style="padding:1rem; margin-bottom:1rem; background:#f9f9f9; border-left:4px solid #d32f2f; border-radius:4px;">
+                <div style="display:flex; justify-content:space-between;">
+                    <strong><a href="{% url 'core:restaurant_detail' review.restaurant.id %}" style="color:#d32f2f; text-decoration:none;">{{ review.restaurant.name }}</a></strong>
+                    <span class="rating">★ {{ review.rating }}/5</span>
+                </div>
+                <div><em>{{ review.title }}</em></div>
+                <p style="margin: 0.5rem 0;">{{ review.text }}</p>
+                <small style="color:#999;">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="color:#999; font-style:italic;">You haven't written any reviews yet.</p>
+    {% endif %}
+
+    <h3>My Favorites ({{ favorites.count }})</h3>
+    {% if favorites %}
+        <ul style="list-style:none; padding:0;">
+            {% for r in favorites %}
+                <li style="padding:0.5rem 0; border-bottom:1px solid #eee;">
+                    <a href="{% url 'core:restaurant_detail' r.id %}" style="color:#d32f2f; text-decoration:none;">{{ r.name }}</a>
+                    <span style="color:#999;"> — {{ r.cuisine }} • {{ r.location }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p style="color:#999; font-style:italic;">No favorites yet.</p>
+    {% endif %}
+{% endblock %}
