@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Restaurant
+from .models import Restaurant, Review
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -20,4 +20,14 @@ class RestaurantForm(forms.ModelForm):
         fields = ['name', 'description', 'cuisine', 'location', 'address', 'phone', 'email', 'website', 'price_range']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
+        }
+
+
+class ReviewForm(forms.ModelForm):
+    """Form for creating and editing reviews"""
+    class Meta:
+        model = Review
+        fields = ['title', 'text', 'rating']
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 4}),
         }

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h2>{{ page_title }}</h2>
+
+<p>Are you sure you want to delete your review for "{{ review.restaurant.name }}"?</p>
+
+<p><strong>Title:</strong> {{ review.title }}</p>
+<p><strong>Rating:</strong> {{ review.rating }}/5</p>
+<p><strong>Text:</strong> {{ review.text }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete Review</button>
+    <a href="{% url 'core:restaurant_detail' review.restaurant.id %}">Cancel</a>
+</form>
+{% endblock %}

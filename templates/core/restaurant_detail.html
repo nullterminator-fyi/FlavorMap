@@ -40,11 +40,25 @@
                         </div>
                         <p style="margin: 1rem 0;">{{ review.text }}</p>
                         <small style="color: #999;">{{ review.created_at|date:"M d, Y" }}</small>
+                        {% if user.is_authenticated and review.user == user %}
+                            <div style="margin-top: 0.5rem;">
+                                <a href="{% url 'core:delete_review' review.id %}" style="color: #f44336; text-decoration: none; font-size: 0.9em;">Delete Review</a>
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
         {% else %}
             <p style="color: #999; font-style: italic;">No reviews yet. Be the first to review this restaurant!</p>
+        {% endif %}
+        
+        {% if review_form %}
+        <h3>{% if user_review %}Edit Your Review{% else %}Write a Review{% endif %}</h3>
+        <form method="post" style="margin: 2rem 0; padding: 1.5rem; background-color: #f9f9f9; border-radius: 8px;">
+            {% csrf_token %}
+            {{ review_form.as_p }}
+            <button type="submit" class="btn">{% if user_review %}Update Review{% else %}Submit Review{% endif %}</button>
+        </form>
         {% endif %}
         
         <div style="margin-top: 2rem;">

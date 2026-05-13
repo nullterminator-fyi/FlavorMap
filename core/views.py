@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Restaurant, Cuisine, Location, Review
-from .forms import CustomUserCreationForm, RestaurantForm
+from .forms import CustomUserCreationForm, RestaurantForm, ReviewForm
 
 
 def register(request):
@@ -71,10 +71,34 @@ def restaurant_detail(request, restaurant_id):
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
     reviews = restaurant.reviews.all()
     
+    review_form = None
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = reviews.filter(user=request.user).first()
+        if request.method == 'POST':
+            if user_review:
+                form = ReviewForm(request.POST, instance=user_review)
+            else:
+                form = ReviewForm(request.POST)
+            if form.is_valid():
+                review = form.save(commit=False)
+                review.restaurant = restaurant
+                review.user = request.user
+                review.save()
+                messages.success(request, 'Review submitted successfully!')
+                return redirect('core:restaurant_detail', restaurant_id=restaurant.id)
+        else:
+            if user_review:
+                review_form = ReviewForm(instance=user_review)
+            else:
+                review_form = ReviewForm()
+    
     context = {
         'page_title': restaurant.name,
         'restaurant': restaurant,
         'reviews': reviews,
+        'review_form': review_form,
+        'user_review': user_review,
     }
     return render(request, 'core/restaurant_detail.html', context)
 
@@ -144,6 +168,27 @@ def edit_restaurant(request, restaurant_id):
         'restaurant': restaurant,
     }
     return render(request, 'core/restaurant_form.html', context)
+
+
+@login_required
+def delete_review(request, review_id):
+    """Delete a review (only by author)"""
+    review = get_object_or_404(Review, id=review_id)
+    
+    if review.user != request.user:
+        messages.error(request, 'You can only delete your own reviews.')
+        return redirect('core:restaurant_detail', restaurant_id=review.restaurant.id)
+    
+    if request.method == 'POST':
+        review.delete()
+        messages.success(request, 'Review deleted successfully!')
+        return redirect('core:restaurant_detail', restaurant_id=review.restaurant.id)
+    
+    context = {
+        'page_title': f'Delete Review for {review.restaurant.name}',
+        'review': review,
+    }
+    return render(request, 'core/review_confirm_delete.html', context)
 
 
 @login_required
