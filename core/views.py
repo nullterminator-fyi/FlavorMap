@@ -4,7 +4,9 @@ from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Restaurant, Cuisine, Location, Review
+from django.db.models import Sum, Value
+from django.db.models.functions import Coalesce
+from .models import Restaurant, Cuisine, Location, Review, LikeDislike
 from .forms import CustomUserCreationForm, RestaurantForm, ReviewForm
 
 
@@ -69,10 +71,12 @@ def restaurant_list(request):
 def restaurant_detail(request, restaurant_id):
     """Individual restaurant detail page"""
     restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-    reviews = restaurant.reviews.all()
+    reviews = restaurant.reviews.select_related('user').prefetch_related('like_dislikes')
+    reviews = reviews.annotate(vote_score=Coalesce(Sum('like_dislikes__score'), Value(0))).order_by('-vote_score', '-created_at')
     
     review_form = None
     user_review = None
+    user_vote_map = {}
     if request.user.is_authenticated:
         user_review = reviews.filter(user=request.user).first()
         if request.method == 'POST':
@@ -92,6 +96,12 @@ def restaurant_detail(request, restaurant_id):
                 review_form = ReviewForm(instance=user_review)
             else:
                 review_form = ReviewForm()
+
+        votes = LikeDislike.objects.filter(user=request.user, review__restaurant=restaurant)
+        user_vote_map = {vote.review_id: vote.score for vote in votes}
+    
+    for review in reviews:
+        review.user_vote_score = user_vote_map.get(review.id, 0)
     
     context = {
         'page_title': restaurant.name,
@@ -101,6 +111,37 @@ def restaurant_detail(request, restaurant_id):
         'user_review': user_review,
     }
     return render(request, 'core/restaurant_detail.html', context)
+
+
+@login_required
+def vote_review(request, review_id):
+    """Handle like/dislike toggles for a review"""
+    review = get_object_or_404(Review, id=review_id)
+    if request.method != 'POST':
+        return redirect('core:restaurant_detail', restaurant_id=review.restaurant.id)
+
+    try:
+        score = int(request.POST.get('vote', '0'))
+    except ValueError:
+        score = 0
+
+    if score not in (LikeDislike.Score.LIKE, LikeDislike.Score.DISLIKE):
+        return redirect('core:restaurant_detail', restaurant_id=review.restaurant.id)
+
+    like_dislike, created = LikeDislike.objects.get_or_create(
+        review=review,
+        user=request.user,
+        defaults={'score': score},
+    )
+
+    if not created:
+        if like_dislike.score == score:
+            like_dislike.score = LikeDislike.Score.NONE
+        else:
+            like_dislike.score = score
+        like_dislike.save()
+
+    return redirect('core:restaurant_detail', restaurant_id=review.restaurant.id)
 
 
 def about(request):

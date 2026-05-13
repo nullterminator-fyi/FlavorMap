@@ -136,6 +136,39 @@
         .btn:hover {
             background-color: #c62828;
         }
+
+        .vote-button {
+            width: 1.8rem;
+            height: 1.8rem;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            color: #666;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        .vote-button:hover {
+            opacity: 0.95;
+        }
+
+        .vote-button.active-like {
+            background-color: #e8f5e9;
+            border-color: #81c784;
+            color: #2e7d32;
+        }
+
+        .vote-button.active-dislike {
+            background-color: #ffebee;
+            border-color: #e57373;
+            color: #c62828;
+        }
+
+        .vote-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
         
         .featured-section {
             background-color: #fff3e0;

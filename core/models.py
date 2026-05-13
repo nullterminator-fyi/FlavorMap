@@ -82,3 +82,25 @@ class Review(models.Model):
     
     def __str__(self):
         return f"{self.restaurant.name} - {self.rating}/5 by {self.user.username}"
+
+    def score(self):
+        """Calculate net score based on likes and dislikes"""
+        likes = self.like_dislikes.filter(score=LikeDislike.Score.LIKE).count() * LikeDislike.Score.LIKE
+        dislikes = self.like_dislikes.filter(score=LikeDislike.Score.DISLIKE).count() * LikeDislike.Score.DISLIKE
+        return likes + dislikes
+    
+class LikeDislike(models.Model):
+    """Model to track user likes and dislikes on reviews"""
+    class Score(models.IntegerChoices):
+        LIKE = 1, 'Like'
+        NONE = 0, 'None'
+        DISLIKE = -1, 'Dislike'
+
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='like_dislikes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='review_likes_dislikes')
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    score = models.IntegerField(choices=Score)
+    
+    class Meta:
+        unique_together = ('review', 'user')
