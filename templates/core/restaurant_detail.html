@@ -141,15 +141,35 @@
         <div style="margin: 1rem 0;">
             {% for review in reviews %}
                 <div style="padding:1.5rem; margin-bottom:1rem; background-color:#f9f9f9; border-left:4px solid #d32f2f; border-radius:4px;">
-                    <div style="display:flex; justify-content:space-between; align-items:start;">
+                    <div style="display:flex; justify-content: flex-start; align-items: end; gap: 0.6rem;">
                         <div>
                             <strong>{{ review.title }}</strong>
-                            <div style="font-size:0.9em; color:#666;">by <em>{{ review.user.username }}</em></div>
                         </div>
                         <span class="rating">★ {{ review.rating }}/5</span>
                     </div>
                     <p style="margin: 1rem 0;">{{ review.text }}</p>
-                    <small style="color:#999;">{{ review.created_at|date:"M d, Y" }}</small>
+                    <div style="display: flex; justify-content: flex-start; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <div style="display: inline-flex; gap: 0.5rem; align-items: center;">
+                                {% if user.is_authenticated %}
+                                    <form method="post" action="{% url 'core:review_vote' review.id %}" style="display: inline-flex; gap: 0.5rem;">
+                                        {% csrf_token %}
+                                        <button type="submit" name="vote" value="1" class="vote-button{% if review.user_vote_score == 1 %} active-like{% endif %}" title="Like">👍</button>
+                                        <span style="font-weight: bold; color: #333;">{{ review.score }}</span>
+                                        <button type="submit" name="vote" value="-1" class="vote-button{% if review.user_vote_score == -1 %} active-dislike{% endif %}" title="Dislike">👎</button>
+                                    </form>
+                                {% else %}
+                                    <button type="button" class="vote-button" disabled title="Login to vote">👍</button>
+                                    <span style="font-weight: bold; color: #333;">{{ review.score }}</span>
+                                    <button type="button" class="vote-button" disabled title="Login to vote">👎</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                            <div style="font-size: 0.9em; color: #666; margin-top: 0.25rem;">
+                                by <em>{{ review.user.username }}</em>
+                            </div>
+                            <small style="color:#999;">{{ review.created_at|date:"M d, Y" }}</small>
+                        </div>
 
                     {% if user.is_authenticated and review.user == user %}
                         <div style="margin-top:0.5rem;">

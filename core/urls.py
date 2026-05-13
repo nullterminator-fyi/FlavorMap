@@ -26,6 +26,7 @@ urlpatterns = [
     # Reviews
     path('reviews/<int:review_id>/delete/', views.delete_review, name='delete_review'),
     path('reviews/<int:review_id>/reply/', views.add_reply, name='add_reply'),
+    path('reviews/<int:review_id>/vote/', views.vote_review, name='review_vote'),
     path('replies/<int:reply_id>/delete/', views.delete_reply, name='delete_reply'),
 
     # Favorites

@@ -4,17 +4,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q, Avg
 from django.db import transaction, IntegrityError
+from django.db.models import Sum, Value
+from django.db.models.functions import Coalesce
 from django.http import HttpResponseForbidden
 
 from .models import (
-    Restaurant, Cuisine, Location, Review,
+    Restaurant, Cuisine, Location, Review, LikeDislike,
     MenuItem, ReviewReply, UserProfile, OpeningHours,
 )
 from .forms import (
     CustomUserCreationForm, RestaurantForm, ReviewForm,
     ReviewReplyForm, MenuItemForm, UserProfileForm,
 )
-
 
 # ------------------------------------------------------------------ #
 # AUTH
@@ -124,11 +125,13 @@ def restaurant_detail(request, restaurant_id):
         Restaurant.objects.prefetch_related('reviews__replies', 'menu_items', 'opening_hours'),
         id=restaurant_id,
     )
-    reviews = restaurant.reviews.all()
+    reviews = restaurant.reviews.select_related('user').prefetch_related('like_dislikes')
+    reviews = reviews.annotate(vote_score=Coalesce(Sum('like_dislikes__score'), Value(0))).order_by('-vote_score', '-created_at')
 
     review_form = None
     user_review = None
     is_favorited = False
+    user_vote_map = {}
 
     if request.user.is_authenticated:
         user_review = reviews.filter(user=request.user).first()
@@ -152,6 +155,12 @@ def restaurant_detail(request, restaurant_id):
                     messages.error(request, 'Could not save review (you may already have one).')
         else:
             review_form = ReviewForm(instance=user_review) if user_review else ReviewForm()
+
+        votes = LikeDislike.objects.filter(user=request.user, review__restaurant=restaurant)
+        user_vote_map = {vote.review_id: vote.score for vote in votes}
+    
+    for review in reviews:
+        review.user_vote_score = user_vote_map.get(review.id, 0)
 
     # Build hours dict so the template can iterate 0..6 in order
     hours_by_day = {h.day: h for h in restaurant.opening_hours.all()}
@@ -197,6 +206,36 @@ def delete_reply(request, reply_id):
         reply.delete()
         messages.success(request, 'Reply deleted.')
     return redirect('core:restaurant_detail', restaurant_id=restaurant_id)
+
+@login_required
+def vote_review(request, review_id):
+    """Handle like/dislike toggles for a review"""
+    review = get_object_or_404(Review, id=review_id)
+    if request.method != 'POST':
+        return redirect('core:restaurant_detail', restaurant_id=review.restaurant.id)
+
+    try:
+        score = int(request.POST.get('vote', '0'))
+    except ValueError:
+        score = 0
+
+    if score not in (LikeDislike.Score.LIKE, LikeDislike.Score.DISLIKE):
+        return redirect('core:restaurant_detail', restaurant_id=review.restaurant.id)
+
+    like_dislike, created = LikeDislike.objects.get_or_create(
+        review=review,
+        user=request.user,
+        defaults={'score': score},
+    )
+
+    if not created:
+        if like_dislike.score == score:
+            like_dislike.score = LikeDislike.Score.NONE
+        else:
+            like_dislike.score = score
+        like_dislike.save()
+
+    return redirect('core:restaurant_detail', restaurant_id=review.restaurant.id)
 
 
 # ------------------------------------------------------------------ #
