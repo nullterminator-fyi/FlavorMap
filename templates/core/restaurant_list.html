@@ -4,75 +4,83 @@
 
 {% block content %}
     <h2>{{ page_title }}</h2>
-    
+
     <div style="margin: 2rem 0; padding: 1.5rem; background-color: #f9f9f9; border-radius: 8px;">
-        <h3 style="margin-top: 0;">Filter Restaurants</h3>
-        <form method="GET" style="display: grid; gap: 1rem; grid-template-columns: 1fr 1fr 1fr auto;">
-            <div>
-                <label for="cuisine"><strong>Cuisine:</strong></label>
-                <select id="cuisine" name="cuisine" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
-                    <option value="">All Cuisines</option>
-                    {% for cuisine in cuisines %}
-                        <option value="{{ cuisine.id }}" {% if request.GET.cuisine|add:"0" == cuisine.id %}selected{% endif %}>
-                            {{ cuisine.name }}
-                        </option>
-                    {% endfor %}
-                </select>
+        <form method="GET">
+            <div style="margin-bottom: 1rem;">
+                <input type="text" name="q" value="{{ q }}"
+                       placeholder="Search by name, description, or location..."
+                       style="width: 100%; padding: 0.7rem; border-radius: 4px; border: 1px solid #ddd; font-size: 1em;">
             </div>
-            
-            <div>
-                <label for="location"><strong>Location:</strong></label>
-                <select id="location" name="location" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
-                    <option value="">All Locations</option>
-                    {% for location in locations %}
-                        <option value="{{ location.id }}" {% if request.GET.location|add:"0" == location.id %}selected{% endif %}>
-                            {{ location.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div>
-                <label for="price_range"><strong>Price Range:</strong></label>
-                <select id="price_range" name="price_range" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
-                    <option value="">All Prices</option>
-                    <option value="€" {% if request.GET.price_range == "€" %}selected{% endif %}>Budget (€)</option>
-                    <option value="€€" {% if request.GET.price_range == "€€" %}selected{% endif %}>Moderate (€€)</option>
-                    <option value="€€€" {% if request.GET.price_range == "€€€" %}selected{% endif %}>Expensive (€€€)</option>
-                </select>
-            </div>
-            
-            <div style="display: flex; align-items: flex-end;">
-                <button type="submit" class="btn" style="margin: 0; width: 100%;">Filter</button>
+
+            <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+                <div>
+                    <label><strong>Cuisine:</strong></label>
+                    <select name="cuisine" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                        <option value="">All Cuisines</option>
+                        {% for c in cuisines %}
+                            <option value="{{ c.id }}" {% if request.GET.cuisine|add:"0" == c.id %}selected{% endif %}>{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label><strong>Location:</strong></label>
+                    <select name="location" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                        <option value="">All Locations</option>
+                        {% for l in locations %}
+                            <option value="{{ l.id }}" {% if request.GET.location|add:"0" == l.id %}selected{% endif %}>{{ l.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label><strong>Price:</strong></label>
+                    <select name="price_range" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                        <option value="">All Prices</option>
+                        <option value="€"   {% if request.GET.price_range == "€" %}selected{% endif %}>Budget (€)</option>
+                        <option value="€€"  {% if request.GET.price_range == "€€" %}selected{% endif %}>Moderate (€€)</option>
+                        <option value="€€€" {% if request.GET.price_range == "€€€" %}selected{% endif %}>Expensive (€€€)</option>
+                    </select>
+                </div>
+                <div>
+                    <label><strong>Sort by:</strong></label>
+                    <select name="sort" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                        <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest</option>
+                        <option value="rating" {% if sort == "rating" %}selected{% endif %}>Rating (high to low)</option>
+                        <option value="name"   {% if sort == "name"   %}selected{% endif %}>Name (A-Z)</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: flex-end; gap: 0.5rem;">
+                    <button type="submit" class="btn" style="margin: 0; flex: 1;">Apply</button>
+                    <a href="{% url 'core:restaurant_list' %}" class="btn btn-secondary" style="margin: 0;">Clear</a>
+                </div>
             </div>
         </form>
     </div>
-    
+
     <p>Found {{ restaurants.count }} restaurant{{ restaurants.count|pluralize }}.</p>
-    
+
     <div class="restaurant-grid">
         {% for restaurant in restaurants %}
             <div class="restaurant-card">
+                {% if restaurant.photo %}
+                    <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="thumb">
+                {% endif %}
                 <div class="restaurant-name">{{ restaurant.name }}</div>
-                <div class="restaurant-info">
-                    <strong>Cuisine:</strong> {{ restaurant.cuisine }}
-                </div>
-                <div class="restaurant-info">
-                    <strong>Location:</strong> {{ restaurant.location }}
-                </div>
-                <div class="restaurant-info">
-                    <strong>Price Range:</strong> {{ restaurant.get_price_range_display }}
-                </div>
+                <div class="restaurant-info"><strong>Cuisine:</strong> {{ restaurant.cuisine }}</div>
+                <div class="restaurant-info"><strong>Location:</strong> {{ restaurant.location }}</div>
+                <div class="restaurant-info"><strong>Price:</strong> {{ restaurant.get_price_range_display }}</div>
                 <div class="restaurant-info">
                     <span class="rating">★ {{ restaurant.average_rating }}/5</span>
                 </div>
                 <div class="restaurant-info" style="font-size: 0.85em; color: #999;">
-                    {{ restaurant.reviews.count }} review{{ restaurant.reviews.count|pluralize }}
+                    {{ restaurant.review_count }} review{{ restaurant.review_count|pluralize }}
                 </div>
                 <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn">View Details</a>
             </div>
         {% empty %}
-            <p>No restaurants found with those filters. Try different options!</p>
+            <p style="grid-column: 1/-1; padding: 2rem; text-align: center; color: #999;">
+                No restaurants found. Try different filters!
+            </p>
         {% endfor %}
     </div>
 {% endblock %}

@@ -3,93 +3,210 @@
 {% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
-    {% if restaurant.id %}
-        <h2>{{ restaurant.name }}</h2>
-        
-        <div class="restaurant-info" style="margin: 2rem 0; padding: 1.5rem; background-color: #f9f9f9; border-radius: 8px;">
-            <p><strong>Cuisine Type:</strong> {{ restaurant.cuisine }}</p>
-            <p><strong>Location:</strong> {{ restaurant.location }}</p>
-            <p><strong>Price Range:</strong> {{ restaurant.get_price_range_display }}</p>
-            <p><strong>Address:</strong> {{ restaurant.address }}</p>
-            <p><strong>Phone:</strong> <a href="tel:{{ restaurant.phone }}" style="color: #d32f2f; text-decoration: none;">{{ restaurant.phone }}</a></p>
-            {% if restaurant.email %}
-                <p><strong>Email:</strong> <a href="mailto:{{ restaurant.email }}" style="color: #d32f2f; text-decoration: none;">{{ restaurant.email }}</a></p>
-            {% endif %}
-            {% if restaurant.website %}
-                <p><strong>Website:</strong> <a href="{{ restaurant.website }}" target="_blank" style="color: #d32f2f; text-decoration: none;">{{ restaurant.website }}</a></p>
-            {% endif %}
-            <p style="margin-top: 1rem;"><span class="rating" style="font-size: 1.3em;">★ {{ restaurant.average_rating }}/5</span></p>
-        </div>
-        
-        <h3>About</h3>
-        <p>{{ restaurant.description }}</p>
-        
-        <h3>Reviews ({{ reviews.count }})</h3>
-        {% if reviews %}
-            <div style="margin: 2rem 0;">
-                {% for review in reviews %}
-                    <div style="padding: 1.5rem; margin-bottom: 1rem; background-color: #f9f9f9; border-left: 4px solid #d32f2f; border-radius: 4px;">
-                        <div style="display: flex; justify-content: flex-start; align-items: end; gap: 0.6rem; margin-bottom: 0.5rem;">
-                            <div>
-                                <strong>{{ review.title }}</strong>
-                            </div>
-                            <span class="rating">★ {{ review.rating }}/5</span>
-                        </div>
-                        <p style="margin: 1rem 0;">{{ review.text }}</p>
-                        <div style="display: flex; justify-content: flex-start; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.5rem;">
+    <h2>{{ restaurant.name }}</h2>
 
-                            <div style="display: inline-flex; gap: 0.5rem; align-items: center;">
-                                {% if user.is_authenticated %}
-                                    <form method="post" action="{% url 'core:review_vote' review.id %}" style="display: inline-flex; gap: 0.5rem;">
-                                        {% csrf_token %}
-                                        <button type="submit" name="vote" value="1" class="vote-button{% if review.user_vote_score == 1 %} active-like{% endif %}" title="Like">👍</button>
-                                        <span style="font-weight: bold; color: #333;">{{ review.score }}</span>
-                                        <button type="submit" name="vote" value="-1" class="vote-button{% if review.user_vote_score == -1 %} active-dislike{% endif %}" title="Dislike">👎</button>
-                                    </form>
-                                {% else %}
-                                    <button type="button" class="vote-button" disabled title="Login to vote">👍</button>
-                                    <span style="font-weight: bold; color: #333;">{{ review.score }}</span>
-                                    <button type="button" class="vote-button" disabled title="Login to vote">👎</button>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                            <div style="font-size: 0.9em; color: #666; margin-top: 0.25rem;">
-                                by <em>{{ review.user.username }}</em>
-                            </div>
-                            <small style="color: #999;">{{ review.created_at|date:"M d, Y" }}</small>
-                        </div>
-                        {% if user.is_authenticated and review.user == user %}
-                            <div style="margin-top: 0.5rem;">
-                                <a href="{% url 'core:delete_review' review.id %}" style="color: #f44336; text-decoration: none; font-size: 0.9em;">Delete Review</a>
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p style="color: #999; font-style: italic;">No reviews yet. Be the first to review this restaurant!</p>
+    {% if restaurant.photo %}
+        <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}"
+             style="width:100%; max-height:380px; object-fit:cover; border-radius:8px; margin-bottom:1rem;">
+    {% endif %}
+
+    <div class="restaurant-info" style="margin: 1rem 0; padding: 1.5rem; background-color: #f9f9f9; border-radius: 8px;">
+        <p><strong>Cuisine:</strong> {{ restaurant.cuisine }}</p>
+        <p><strong>Location:</strong> {{ restaurant.location }}</p>
+        <p><strong>Price Range:</strong> {{ restaurant.get_price_range_display }}</p>
+        <p><strong>Address:</strong> {{ restaurant.address }}</p>
+        <p><strong>Phone:</strong>
+            <a href="tel:{{ restaurant.phone }}" style="color:#d32f2f; text-decoration:none;">{{ restaurant.phone }}</a>
+        </p>
+        {% if restaurant.email %}
+            <p><strong>Email:</strong>
+                <a href="mailto:{{ restaurant.email }}" style="color:#d32f2f; text-decoration:none;">{{ restaurant.email }}</a>
+            </p>
         {% endif %}
-        
-        {% if review_form %}
+        {% if restaurant.website %}
+            <p><strong>Website:</strong>
+                <a href="{{ restaurant.website }}" target="_blank" style="color:#d32f2f; text-decoration:none;">{{ restaurant.website }}</a>
+            </p>
+        {% endif %}
+        <p style="margin-top: 1rem;">
+            <span class="rating" style="font-size: 1.3em;">★ {{ restaurant.average_rating }}/5</span>
+            <span style="color:#999;">({{ restaurant.review_count }} review{{ restaurant.review_count|pluralize }})</span>
+        </p>
+
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'core:toggle_favorite' restaurant.id %}" style="display:inline; margin-top:1rem;">
+                {% csrf_token %}
+                {% if is_favorited %}
+                    <button type="submit" class="btn btn-secondary">★ Remove from Favorites</button>
+                {% else %}
+                    <button type="submit" class="btn">☆ Add to Favorites</button>
+                {% endif %}
+            </form>
+        {% endif %}
+    </div>
+
+    <h3>About</h3>
+    <p>{{ restaurant.description }}</p>
+
+    {# ------------------ OPENING HOURS ------------------ #}
+    <h3>Opening Hours</h3>
+    <table class="hours-table">
+        {% for day_value, day_label in day_labels %}
+            <tr>
+                <td>{{ day_label }}</td>
+                <td>
+                    {% for h in restaurant.opening_hours.all %}
+                        {% if h.day == day_value %}
+                            {% if h.is_closed %}
+                                <span style="color:#c62828;">Closed</span>
+                            {% else %}
+                                {{ h.open_time|time:"H:i" }} – {{ h.close_time|time:"H:i" }}
+                            {% endif %}
+                        {% endif %}
+                    {% empty %}
+                        <span style="color:#999;">Not set</span>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {# ------------------ MAP INTEGRATION (BONUS) ------------------ #}
+    <h3>📍 Location on Map</h3>
+    <div style="margin: 1rem 0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        {% if restaurant.latitude and restaurant.longitude %}
+            <iframe
+                width="100%"
+                height="350"
+                frameborder="0"
+                style="border:0;"
+                src="https://www.google.com/maps?q={{ restaurant.latitude }},{{ restaurant.longitude }}&hl=en&z=16&output=embed"
+                allowfullscreen>
+            </iframe>
+            <p style="margin-top:0.5rem;">
+                <a href="https://www.google.com/maps/search/?api=1&query={{ restaurant.latitude }},{{ restaurant.longitude }}"
+                   target="_blank" class="btn btn-secondary">Open in Google Maps</a>
+            </p>
+        {% else %}
+            {# Fallback: search by address if no coordinates are set #}
+            <iframe
+                width="100%"
+                height="350"
+                frameborder="0"
+                style="border:0;"
+                src="https://www.google.com/maps?q={{ restaurant.address|urlencode }}&hl=en&z=15&output=embed"
+                allowfullscreen>
+            </iframe>
+            <p style="margin-top:0.5rem;">
+                <a href="https://www.google.com/maps/search/?api=1&query={{ restaurant.address|urlencode }}"
+                   target="_blank" class="btn btn-secondary">Open in Google Maps</a>
+            </p>
+        {% endif %}
+    </div>
+
+    {# ------------------ MENU ------------------ #}
+    <h3>Menu</h3>
+    {% if restaurant.menu_items.exists %}
+        <div class="menu-grid">
+            {% for item in restaurant.menu_items.all %}
+                <div class="menu-card">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                        <strong>{{ item.name }}</strong>
+                        <span class="price">€{{ item.price }}</span>
+                    </div>
+                    <div style="color:#999; font-size:0.85em;">{{ item.get_category_display }}</div>
+                    {% if item.description %}<p style="margin-top:0.5rem;">{{ item.description }}</p>{% endif %}
+                    {% if user.is_authenticated and restaurant.created_by == user %}
+                        <div style="margin-top:0.5rem;">
+                            <a href="{% url 'core:edit_menu_item' item.id %}" style="color:#1976d2; text-decoration:none; font-size:0.9em;">Edit</a> |
+                            <form method="post" action="{% url 'core:delete_menu_item' item.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" style="background:none; border:none; color:#f44336; cursor:pointer; font-size:0.9em; padding:0;">Delete</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color:#999; font-style:italic;">No menu items yet.</p>
+    {% endif %}
+    {% if user.is_authenticated and restaurant.created_by == user %}
+        <a href="{% url 'core:add_menu_item' restaurant.id %}" class="btn">+ Add Menu Item</a>
+    {% endif %}
+
+    {# ------------------ REVIEWS ------------------ #}
+    <h3>Reviews ({{ reviews.count }})</h3>
+    {% if reviews %}
+        <div style="margin: 1rem 0;">
+            {% for review in reviews %}
+                <div style="padding:1.5rem; margin-bottom:1rem; background-color:#f9f9f9; border-left:4px solid #d32f2f; border-radius:4px;">
+                    <div style="display:flex; justify-content:space-between; align-items:start;">
+                        <div>
+                            <strong>{{ review.title }}</strong>
+                            <div style="font-size:0.9em; color:#666;">by <em>{{ review.user.username }}</em></div>
+                        </div>
+                        <span class="rating">★ {{ review.rating }}/5</span>
+                    </div>
+                    <p style="margin: 1rem 0;">{{ review.text }}</p>
+                    <small style="color:#999;">{{ review.created_at|date:"M d, Y" }}</small>
+
+                    {% if user.is_authenticated and review.user == user %}
+                        <div style="margin-top:0.5rem;">
+                            <a href="{% url 'core:delete_review' review.id %}" style="color:#f44336; text-decoration:none; font-size:0.9em;">Delete Review</a>
+                        </div>
+                    {% endif %}
+
+                    {# Replies #}
+                    {% if review.replies.exists %}
+                        <div style="margin-top:1rem; padding-left:1rem; border-left:2px solid #ccc;">
+                            {% for reply in review.replies.all %}
+                                <div style="padding:0.5rem; margin-bottom:0.5rem; background:#fff; border-radius:4px;">
+                                    <strong>{{ reply.user.username }}:</strong> {{ reply.text }}
+                                    <div style="font-size:0.8em; color:#999;">{{ reply.created_at|date:"M d, Y H:i" }}
+                                        {% if user.is_authenticated and reply.user == user %}
+                                            | <form method="post" action="{% url 'core:delete_reply' reply.id %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" style="background:none; border:none; color:#f44336; cursor:pointer; font-size:0.85em; padding:0;">Delete</button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {# Reply form #}
+                    {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'core:add_reply' review.id %}" style="margin-top:0.5rem;">
+                            {% csrf_token %}
+                            {{ reply_form.text }}
+                            <button type="submit" class="btn" style="margin-top:0.25rem; padding:0.4rem 0.8rem;">Reply</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color:#999; font-style:italic;">No reviews yet. Be the first to review this restaurant!</p>
+    {% endif %}
+
+    {% if review_form %}
         <h3>{% if user_review %}Edit Your Review{% else %}Write a Review{% endif %}</h3>
-        <form method="post" style="margin: 2rem 0; padding: 1.5rem; background-color: #f9f9f9; border-radius: 8px;">
+        <form method="post" style="margin: 1rem 0; padding: 1.5rem; background-color:#f9f9f9; border-radius:8px;">
             {% csrf_token %}
             {{ review_form.as_p }}
             <button type="submit" class="btn">{% if user_review %}Update Review{% else %}Submit Review{% endif %}</button>
         </form>
-        {% endif %}
-        
-        <div style="margin-top: 2rem;">
-            <a href="{% url 'core:restaurant_list' %}" class="btn">Back to Restaurants</a>
-            {% if user.is_authenticated and restaurant.created_by == user %}
-                <a href="{% url 'core:edit_restaurant' restaurant.id %}" class="btn" style="margin-left: 1rem;">Edit Restaurant</a>
-                <a href="{% url 'core:delete_restaurant' restaurant.id %}" class="btn" style="margin-left: 1rem; background-color: #f44336;">Delete Restaurant</a>
-            {% endif %}
-        </div>
-    {% else %}
-        <h2>{{ restaurant.name }}</h2>
-        <p>Sorry, the restaurant you're looking for could not be found.</p>
-        <a href="{% url 'core:restaurant_list' %}" class="btn">Back to Restaurants</a>
+    {% elif not user.is_authenticated %}
+        <p><a href="{% url 'login' %}">Log in</a> to write a review.</p>
     {% endif %}
+
+    <div style="margin-top:2rem;">
+        <a href="{% url 'core:restaurant_list' %}" class="btn btn-secondary">← Back to Restaurants</a>
+        {% if user.is_authenticated and restaurant.created_by == user %}
+            <a href="{% url 'core:edit_restaurant' restaurant.id %}" class="btn">Edit Restaurant</a>
+            <a href="{% url 'core:delete_restaurant' restaurant.id %}" class="btn btn-danger">Delete Restaurant</a>
+        {% endif %}
+    </div>
 {% endblock %}

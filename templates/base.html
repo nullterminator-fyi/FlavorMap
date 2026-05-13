@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,188 +6,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}FlavorMap - Restaurant Reviews{% endblock %}</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
+            line-height: 1.6; color: #333; background-color: #f4f4f4;
         }
-        
         header {
-            background-color: #d32f2f;
-            color: white;
-            padding: 1rem 0;
+            background-color: #d32f2f; color: white; padding: 1rem 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        header h1 {
-            font-size: 2em;
-            margin-bottom: 0.5rem;
-        }
-        
-        nav {
-            background-color: #c62828;
-            padding: 1rem 0;
-        }
-        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header h1 { font-size: 2em; margin-bottom: 0.5rem; }
+        nav { background-color: #c62828; padding: 1rem 0; }
         nav ul {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
+            list-style: none; display: flex; gap: 1.5rem; flex-wrap: wrap;
+            align-items: center;
         }
-        
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.3s;
+        nav a, nav button {
+            color: white; text-decoration: none; font-weight: 500;
+            transition: opacity 0.3s; background: none; border: none;
+            font-family: inherit; font-size: 1em; cursor: pointer;
         }
-        
-        nav a:hover {
-            opacity: 0.8;
-        }
-        
-        main {
-            min-height: calc(100vh - 300px);
-            padding: 2rem 0;
-        }
-        
+        nav a:hover, nav button:hover { opacity: 0.8; }
+        main { min-height: calc(100vh - 300px); padding: 2rem 0; }
         .content {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background-color: white; padding: 2rem;
+            border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        h2 {
-            color: #d32f2f;
-            margin-bottom: 1.5rem;
-            font-size: 1.8em;
-        }
-        
-        h3 {
-            color: #c62828;
-            margin: 1rem 0 0.5rem 0;
-            font-size: 1.3em;
-        }
-        
+        h2 { color: #d32f2f; margin-bottom: 1.5rem; font-size: 1.8em; }
+        h3 { color: #c62828; margin: 1rem 0 0.5rem 0; font-size: 1.3em; }
         .restaurant-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem; margin: 2rem 0;
         }
-        
         .restaurant-card {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1.5rem;
+            background-color: #f9f9f9; border: 1px solid #ddd;
+            border-radius: 8px; padding: 1.5rem;
             transition: transform 0.3s, box-shadow 0.3s;
         }
-        
         .restaurant-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        
-        .restaurant-name {
-            font-size: 1.3em;
-            color: #d32f2f;
-            margin-bottom: 0.5rem;
+        .restaurant-card img.thumb {
+            width: 100%; height: 140px; object-fit: cover;
+            border-radius: 6px; margin-bottom: 0.75rem;
         }
-        
-        .restaurant-info {
-            font-size: 0.9em;
-            color: #666;
-            margin: 0.5rem 0;
-        }
-        
-        .rating {
-            color: #ff9800;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-        
+        .restaurant-name { font-size: 1.3em; color: #d32f2f; margin-bottom: 0.5rem; }
+        .restaurant-info { font-size: 0.9em; color: #666; margin: 0.5rem 0; }
+        .rating { color: #ff9800; font-weight: bold; font-size: 1.1em; }
         .btn {
-            display: inline-block;
-            background-color: #d32f2f;
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            text-decoration: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 1rem;
+            display: inline-block; background-color: #d32f2f; color: white;
+            padding: 0.6rem 1.2rem; border: none; border-radius: 4px;
+            text-decoration: none; cursor: pointer;
+            transition: background-color 0.3s; margin-top: 0.5rem;
+            font-size: 0.95em; font-family: inherit;
         }
-        
-        .btn:hover {
-            background-color: #c62828;
-        }
-
-        .vote-button {
-            width: 1.8rem;
-            height: 1.8rem;
-            border: 1px solid #ccc;
-            background-color: #f0f0f0;
-            color: #666;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-        }
-
-        .vote-button:hover {
-            opacity: 0.95;
-        }
-
-        .vote-button.active-like {
-            background-color: #e8f5e9;
-            border-color: #81c784;
-            color: #2e7d32;
-        }
-
-        .vote-button.active-dislike {
-            background-color: #ffebee;
-            border-color: #e57373;
-            color: #c62828;
-        }
-
-        .vote-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
+        .btn:hover { background-color: #c62828; }
+        .btn-secondary { background-color: #555; }
+        .btn-secondary:hover { background-color: #333; }
+        .btn-danger { background-color: #f44336; }
+        .btn-danger:hover { background-color: #d32f2f; }
         .featured-section {
-            background-color: #fff3e0;
-            padding: 2rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
+            background-color: #fff3e0; padding: 2rem;
+            border-radius: 8px; margin-bottom: 2rem;
         }
-        
+        .messages { list-style: none; margin-bottom: 1rem; }
+        .messages li {
+            padding: 0.75rem 1rem; border-radius: 4px;
+            margin-bottom: 0.5rem; background: #e8f5e9; color: #2e7d32;
+        }
+        .messages li.error { background: #ffebee; color: #c62828; }
+        .messages li.info { background: #e3f2fd; color: #1565c0; }
+        table.hours-table { border-collapse: collapse; margin: 1rem 0; }
+        table.hours-table td { padding: 0.4rem 1rem; border-bottom: 1px solid #eee; }
+        table.hours-table td:first-child { font-weight: 600; }
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem; margin: 1rem 0;
+        }
+        .menu-card {
+            background: #fafafa; border: 1px solid #eee;
+            border-radius: 6px; padding: 1rem;
+        }
+        .menu-card .price { color: #d32f2f; font-weight: bold; }
         footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
+            background-color: #333; color: white;
+            text-align: center; padding: 2rem; margin-top: 3rem;
         }
-        
-        footer p {
-            margin: 0.5rem 0;
+        footer p { margin: 0.5rem 0; }
+
+        @media (max-width: 720px) {
+            nav ul { gap: 1rem; }
+            .restaurant-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -197,22 +108,24 @@
             <p>Discover Amazing Restaurants Near You</p>
         </div>
     </header>
-    
+
     <nav>
         <div class="container">
             <ul>
                 <li><a href="{% url 'core:home' %}">Home</a></li>
                 <li><a href="{% url 'core:restaurant_list' %}">Restaurants</a></li>
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'core:create_restaurant' %}">Create Restaurant</a></li>
+                    <li><a href="{% url 'core:create_restaurant' %}">+ Add Restaurant</a></li>
+                    <li><a href="{% url 'core:favorites' %}">❤ Favorites</a></li>
+                    <li><a href="{% url 'core:profile' %}">My Profile</a></li>
                 {% endif %}
                 <li><a href="{% url 'core:about' %}">About</a></li>
                 <li><a href="{% url 'core:contact' %}">Contact</a></li>
                 {% if user.is_authenticated %}
                     <li>
-                        <form method="post" action="{% url 'logout' %}">
+                        <form method="post" action="{% url 'logout' %}" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" style="background: none; border: none; color: white; font-weight: 500; cursor: pointer;">Logout ({{ user.username }})</button>
+                            <button type="submit">Logout ({{ user.username }})</button>
                         </form>
                     </li>
                 {% else %}
@@ -222,17 +135,22 @@
             </ul>
         </div>
     </nav>
-    
+
     <main>
         <div class="container">
+            {% if messages %}
+                <ul class="messages">
+                    {% for m in messages %}
+                        <li class="{{ m.tags }}">{{ m }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             <div class="content">
-                {% block content %}
-                <!-- Content goes here -->
-                {% endblock %}
+                {% block content %}{% endblock %}
             </div>
         </div>
     </main>
-    
+
     <footer>
         <p>&copy; 2026 FlavorMap. All rights reserved.</p>
         <p>Helping you find your next favorite restaurant.</p>

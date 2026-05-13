@@ -1,17 +1,21 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+{% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
 <h2>{{ page_title }}</h2>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data" style="padding:1.5rem; background:#f9f9f9; border-radius:8px;">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save Restaurant</button>
+    <button type="submit" class="btn">Save Restaurant</button>
+    {% if restaurant %}
+        <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-secondary">Cancel</a>
+    {% else %}
+        <a href="{% url 'core:restaurant_list' %}" class="btn btn-secondary">Cancel</a>
+    {% endif %}
 </form>
-
-{% if restaurant %}
-<p><a href="{% url 'core:restaurant_detail' restaurant.id %}">Back to Restaurant</a></p>
-{% endif %}
+<p style="margin-top:1rem; color:#999; font-size:0.9em;">
+    💡 Tip: Add latitude/longitude (e.g. Istanbul: 41.0082, 28.9784) to show a precise marker on the map.
+</p>
 {% endblock %}
