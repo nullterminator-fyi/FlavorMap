@@ -172,6 +172,17 @@
                 <li><a href="{% url 'core:restaurant_list' %}">Restaurants</a></li>
                 <li><a href="{% url 'core:about' %}">About</a></li>
                 <li><a href="{% url 'core:contact' %}">Contact</a></li>
+                {% if user.is_authenticated %}
+                    <li>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" style="background: none; border: none; color: white; font-weight: 500; cursor: pointer;">Logout ({{ user.username }})</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'core:register' %}">Register</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>
