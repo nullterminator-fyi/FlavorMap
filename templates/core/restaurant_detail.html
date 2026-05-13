@@ -9,6 +9,7 @@
         <div class="restaurant-info" style="margin: 2rem 0; padding: 1.5rem; background-color: #f9f9f9; border-radius: 8px;">
             <p><strong>Cuisine Type:</strong> {{ restaurant.cuisine }}</p>
             <p><strong>Location:</strong> {{ restaurant.location }}</p>
+            <p><strong>Price Range:</strong> {{ restaurant.get_price_range_display }}</p>
             <p><strong>Address:</strong> {{ restaurant.address }}</p>
             <p><strong>Phone:</strong> <a href="tel:{{ restaurant.phone }}" style="color: #d32f2f; text-decoration: none;">{{ restaurant.phone }}</a></p>
             {% if restaurant.email %}
@@ -48,6 +49,10 @@
         
         <div style="margin-top: 2rem;">
             <a href="{% url 'core:restaurant_list' %}" class="btn">Back to Restaurants</a>
+            {% if user.is_authenticated and restaurant.created_by == user %}
+                <a href="{% url 'core:edit_restaurant' restaurant.id %}" class="btn" style="margin-left: 1rem;">Edit Restaurant</a>
+                <a href="{% url 'core:delete_restaurant' restaurant.id %}" class="btn" style="margin-left: 1rem; background-color: #f44336;">Delete Restaurant</a>
+            {% endif %}
         </div>
     {% else %}
         <h2>{{ restaurant.name }}</h2>

@@ -30,6 +30,12 @@ class Cuisine(models.Model):
 
 class Restaurant(models.Model):
     """Restaurant entity with details and relationships"""
+    PRICE_RANGES = [
+        ('€', 'Budget (€)'),
+        ('€€', 'Moderate (€€)'),
+        ('€€€', 'Expensive (€€€)'),
+    ]
+    
     name = models.CharField(max_length=200)
     description = models.TextField()
     cuisine = models.ForeignKey(Cuisine, on_delete=models.SET_NULL, null=True, related_name='restaurants')
@@ -38,6 +44,8 @@ class Restaurant(models.Model):
     phone = models.CharField(max_length=20)
     email = models.EmailField(blank=True)
     website = models.URLField(blank=True)
+    price_range = models.CharField(max_length=3, choices=PRICE_RANGES, default='€')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_restaurants', null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

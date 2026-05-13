@@ -14,6 +14,9 @@ Restaurant.objects.all().delete()
 Review.objects.all().delete()
 User.objects.filter(username__startswith='testuser').delete()
 
+print("Creating test user for restaurants...")
+test_user = User.objects.create_user(username='restaurant_owner', email='owner@example.com', password='testpass123')
+
 print("Creating locations...")
 locations = [
     Location.objects.create(name='Downtown', description='Heart of the city with modern restaurants'),
@@ -44,7 +47,8 @@ restaurants = [
         address='123 Main St, Downtown',
         phone='(555) 123-4567',
         email='info@gourmetkitchen.com',
-        website='https://gourmetkitchen.com'
+        website='https://gourmetkitchen.com',
+        created_by=test_user
     ),
     Restaurant.objects.create(
         name='Spice Route',
@@ -54,7 +58,8 @@ restaurants = [
         address='456 Oak Ave, Midtown',
         phone='(555) 234-5678',
         email='info@spiceroute.com',
-        website='https://spiceroute.com'
+        website='https://spiceroute.com',
+        created_by=test_user
     ),
     Restaurant.objects.create(
         name='Sakura Sushi',
@@ -64,7 +69,8 @@ restaurants = [
         address='789 Elm St, East Side',
         phone='(555) 345-6789',
         email='info@sakurasushi.com',
-        website='https://sakurasushi.com'
+        website='https://sakurasushi.com',
+        created_by=test_user
     ),
     Restaurant.objects.create(
         name='El Mariachi',
@@ -74,7 +80,8 @@ restaurants = [
         address='321 Pine Rd, West End',
         phone='(555) 456-7890',
         email='info@elmariachi.com',
-        website='https://elmariachi.com'
+        website='https://elmariachi.com',
+        created_by=test_user
     ),
     Restaurant.objects.create(
         name='Le Petit Bistro',
@@ -84,7 +91,8 @@ restaurants = [
         address='654 Maple Dr, Arts District',
         phone='(555) 567-8901',
         email='info@lepetitbistro.com',
-        website='https://lepetitbistro.com'
+        website='https://lepetitbistro.com',
+        created_by=test_user
     ),
     Restaurant.objects.create(
         name='Bangkok Street',
@@ -94,7 +102,8 @@ restaurants = [
         address='234 Willow Ave, Downtown',
         phone='(555) 678-9012',
         email='info@bangkokstreet.com',
-        website='https://bangkokstreet.com'
+        website='https://bangkokstreet.com',
+        created_by=test_user
     ),
     Restaurant.objects.create(
         name='Dynasty Garden',
@@ -104,7 +113,8 @@ restaurants = [
         address='567 Birch Ln, Midtown',
         phone='(555) 789-0123',
         email='info@dynastygarden.com',
-        website='https://dynastygarden.com'
+        website='https://dynastygarden.com',
+        created_by=test_user
     ),
 ]
 
