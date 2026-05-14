@@ -10,21 +10,20 @@
 
 ### Requirements
 - Python 3.10+
-- pip
+- uv
 
 ### 1. Clone & install dependencies
 ```bash
 git clone <your-repo-url>
 cd FlavorMap
-python -m venv venv
-source venv/bin/activate          # Windows: venv\Scripts\activate
-pip install django Pillow
+uv sync
+source .venv/bin/activate
 ```
 > `Pillow` is required by `ImageField` (restaurant photos & avatars).
 
 ### 2. Apply migrations
 ```bash
-python manage.py makemigrations
+pythom manage.py makemigrations
 python manage.py migrate
 ```
 
@@ -84,13 +83,13 @@ The admin panel is at <http://127.0.0.1:8000/admin/> (use the superuser you crea
 - ✅ **Atomic Transactions** — `transaction.atomic()` + `IntegrityError` handling in register / create_restaurant / review submit
 
 ### Bonus
-- ✅ **Map Integration** — Google Maps iframe on every restaurant detail page (uses coordinates if set, falls back to address search). "Open in Google Maps" button included.
-- ☐ CSS & Responsive — basic responsive layout included, full Bootstrap pass not done
-- ☐ JavaScript Element
-- ☐ Restaurant Owner Role
-- ☐ Photo Gallery
-- ☐ Advanced Filtering (partially done — already supports combined cuisine + location + price)
-- ☐ Review Likes
+- [x] **Map Integration** — Google Maps iframe on every restaurant detail page (uses coordinates if set, falls back to address search). "Open in Google Maps" button included.
+- [x] CSS & Responsive — basic responsive layout included
+- [] JavaScript Element
+- [] Restaurant Owner Role
+- [] Photo Gallery
+- [x] Advanced Filtering (partially done — already supports combined cuisine + location + price)
+- [x] Review Likes
 
 ---
 
@@ -158,13 +157,3 @@ Review ── replies (1-N)
 - **Photos not showing** — make sure `DEBUG=True` for development; in production you need a real media server.
 - **Map shows wrong place** — set the restaurant's `latitude` / `longitude` (visible in the create/edit form). If empty, the map falls back to searching by address.
 - **Re-seeding** — `populate_data.py` deletes test users and seeded restaurants before re-creating. Run it any time.
-
----
-
-## 👥 Team
-
-Add your team members here:
-- Member 1 — _role / contribution_
-- Member 2 — _role / contribution_
-- Member 3 — _role / contribution_
-- Member 4 — _role / contribution_
