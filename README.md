@@ -85,9 +85,9 @@ The admin panel is at <http://127.0.0.1:8000/admin/> (use the superuser you crea
 ### Bonus
 - [x] **Map Integration** — Google Maps iframe on every restaurant detail page (uses coordinates if set, falls back to address search). "Open in Google Maps" button included.
 - [x] CSS & Responsive — basic responsive layout included
-- [] JavaScript Element
-- [] Restaurant Owner Role
-- [] Photo Gallery
+- [ ] JavaScript Element
+- [ ] Restaurant Owner Role
+- [ ] Photo Gallery
 - [x] Advanced Filtering (partially done — already supports combined cuisine + location + price)
 - [x] Review Likes
 
