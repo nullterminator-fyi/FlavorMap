@@ -188,7 +188,7 @@ class LikeDislike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='review_likes_dislikes')
     created_at = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    score = models.IntegerField(choices=Score)
+    score = models.IntegerField(choices=Score.choices)
     
     class Meta:
         unique_together = ('review', 'user')
