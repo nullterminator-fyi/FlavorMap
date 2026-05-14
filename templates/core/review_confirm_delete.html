@@ -3,17 +3,44 @@
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<h2>{{ page_title }}</h2>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg rounded-3" style="border-left: 5px solid var(--primary-red);">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4"><i class="fas fa-trash"></i> {{ page_title }}</h2>
 
-<p>Are you sure you want to delete your review for "{{ review.restaurant.name }}"?</p>
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Warning!</strong> This action cannot be undone.
+                </div>
 
-<p><strong>Title:</strong> {{ review.title }}</p>
-<p><strong>Rating:</strong> {{ review.rating }}/5</p>
-<p><strong>Text:</strong> {{ review.text }}</p>
+                <p class="lead text-center mb-4">
+                    Are you sure you want to delete your review for <strong>"{{ review.restaurant.name }}"</strong>?
+                </p>
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, Delete Review</button>
-    <a href="{% url 'core:restaurant_detail' review.restaurant.id %}">Cancel</a>
-</form>
+                <div class="card border-0 bg-light rounded-2 mb-4">
+                    <div class="card-body">
+                        <p class="mb-2"><strong>{{ review.title }}</strong></p>
+                        <div class="rating mb-2">
+                            <i class="fas fa-star"></i> {{ review.rating }}/5
+                        </div>
+                        <p class="text-muted">{{ review.text }}</p>
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-check"></i> Yes, Delete Review
+                        </button>
+                        <a href="{% url 'core:restaurant_detail' review.restaurant.id %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

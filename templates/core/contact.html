@@ -3,19 +3,53 @@
 {% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
-    <h2>{{ page_title }}</h2>
-    
-    <p>{{ message }}</p>
-    
-    <div style="background-color: #f9f9f9; padding: 2rem; border-radius: 8px; margin: 2rem 0;">
-        <h3>Get in Touch</h3>
-        <p><strong>Email:</strong> <a href="mailto:{{ contact_email }}" style="color: #d32f2f; text-decoration: none;">{{ contact_email }}</a></p>
-        <p><strong>Phone:</strong> <a href="tel:{{ contact_phone }}" style="color: #d32f2f; text-decoration: none;">{{ contact_phone }}</a></p>
+    <h2><i class="fas fa-envelope"></i> {{ page_title }}</h2>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-3" style="border-left: 5px solid var(--primary-red);">
+                <div class="card-body p-5">
+                    <p class="lead mb-4">{{ message }}</p>
+
+                    <h5 class="mb-3"><i class="fas fa-phone"></i> Phone</h5>
+                    <p>
+                        <a href="tel:{{ contact_phone }}" class="text-decoration-none text-muted-red">
+                            <strong>{{ contact_phone }}</strong>
+                        </a>
+                    </p>
+
+                    <h5 class="mb-3"><i class="fas fa-envelope"></i> Email</h5>
+                    <p>
+                        <a href="mailto:{{ contact_email }}" class="text-decoration-none text-muted-red">
+                            <strong>{{ contact_email }}</strong>
+                        </a>
+                    </p>
+
+                    <hr>
+
+                    <h5 class="mb-3"><i class="fas fa-comment-dots"></i> Have Questions?</h5>
+                    <p>We'd love to hear from you! Whether you have suggestions for improvements, want to report a restaurant, or just want to say hello, feel free to reach out using the contact information above.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-3" style="border-left: 5px solid var(--primary-green);">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-3"><i class="fas fa-share-alt"></i> Follow Us</h5>
+                    <p class="card-text text-muted mb-4">Stay updated with the latest restaurant reviews and recommendations by following us on social media.</p>
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-outline-primary btn-sm">
+                            <i class="fab fa-facebook"></i> Facebook
+                        </a>
+                        <a href="#" class="btn btn-outline-primary btn-sm">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </a>
+                        <a href="#" class="btn btn-outline-primary btn-sm">
+                            <i class="fab fa-instagram"></i> Instagram
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <h3>Have Questions?</h3>
-    <p>We'd love to hear from you! Whether you have suggestions for improvements, want to report a restaurant, or just want to say hello, feel free to reach out using the contact information above.</p>
-    
-    <h3>Follow Us</h3>
-    <p>Stay updated with the latest restaurant reviews and recommendations by following us on social media.</p>
 {% endblock %}

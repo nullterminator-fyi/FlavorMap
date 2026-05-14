@@ -3,13 +3,34 @@
 {% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<h2>{{ page_title }}</h2>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg rounded-3" style="border-left: 5px solid var(--primary-red);">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4"><i class="fas fa-trash"></i> {{ page_title }}</h2>
 
-<p>Are you sure you want to delete "{{ restaurant.name }}"?</p>
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Warning!</strong> This action cannot be undone.
+                </div>
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, Delete</button>
-    <a href="{% url 'core:restaurant_detail' restaurant.id %}">Cancel</a>
-</form>
+                <p class="lead text-center mb-4">
+                    Are you sure you want to delete <strong>"{{ restaurant.name }}"</strong>?
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-check"></i> Yes, Delete Restaurant
+                        </button>
+                        <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

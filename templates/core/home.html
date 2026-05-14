@@ -3,50 +3,88 @@
 {% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
-    <h2>{{ message }}</h2>
-    <p>Explore our curated selection of restaurants and share your own dining experiences.</p>
+    <h2><i class="fas fa-star"></i> {{ message }}</h2>
+    <p class="lead mb-4">Explore our curated selection of restaurants and share your own dining experiences.</p>
 
     <div class="featured-section">
-        <h3>⭐ Top Rated Restaurants</h3>
-        <div class="restaurant-grid">
+        <h3><i class="fas fa-award"></i> ⭐ Top Rated Restaurants</h3>
+        <div class="row g-4">
             {% for restaurant in top_rated %}
-                <div class="restaurant-card">
-                    {% if restaurant.photo %}
-                        <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="thumb">
-                    {% endif %}
-                    <div class="restaurant-name">{{ restaurant.name }}</div>
-                    <div class="restaurant-info"><strong>Cuisine:</strong> {{ restaurant.cuisine }}</div>
-                    <div class="restaurant-info"><strong>Location:</strong> {{ restaurant.location }}</div>
-                    <div class="restaurant-info">
-                        <span class="rating">★ {{ restaurant.average_rating }}/5</span>
-                        ({{ restaurant.review_count }})
+                <div class="col-md-6 col-lg-4">
+                    <div class="restaurant-card">
+                        {% if restaurant.photo %}
+                            <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="card-img-top">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="color: #999;">
+                                <i class="fas fa-image" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body p-3">
+                            <h5 class="restaurant-name">{{ restaurant.name }}</h5>
+                            <div class="restaurant-info">
+                                <i class="fas fa-utensils"></i>
+                                <strong>{{ restaurant.cuisine }}</strong>
+                            </div>
+                            <div class="restaurant-info">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ restaurant.location }}</span>
+                            </div>
+                            <div class="rating mt-2">
+                                <i class="fas fa-star"></i>
+                                <span>{{ restaurant.average_rating }}/5</span>
+                                <span class="text-muted ps-1" style="font-size: 0.875rem;">({{ restaurant.review_count }})</span>
+                            </div>
+                            <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-primary mt-3 w-100">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </div>
                     </div>
-                    <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn">View Details</a>
                 </div>
             {% empty %}
-                <p>No rated restaurants yet.</p>
+                <div class="col-12">
+                    <p class="text-center text-muted">No rated restaurants yet. Be the first to review!</p>
+                </div>
             {% endfor %}
         </div>
     </div>
 
-    <div class="featured-section" style="background-color: #e3f2fd;">
-        <h3>🆕 Newest Additions</h3>
-        <div class="restaurant-grid">
+    <div class="featured-section green">
+        <h3><i class="fas fa-sparkles"></i> 🆕 Newest Additions</h3>
+        <div class="row g-4">
             {% for restaurant in newest %}
-                <div class="restaurant-card">
-                    {% if restaurant.photo %}
-                        <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="thumb">
-                    {% endif %}
-                    <div class="restaurant-name">{{ restaurant.name }}</div>
-                    <div class="restaurant-info"><strong>Cuisine:</strong> {{ restaurant.cuisine }}</div>
-                    <div class="restaurant-info"><strong>Location:</strong> {{ restaurant.location }}</div>
-                    <div class="restaurant-info">
-                        Added {{ restaurant.created_at|date:"M d, Y" }}
+                <div class="col-md-6 col-lg-4">
+                    <div class="restaurant-card">
+                        {% if restaurant.photo %}
+                            <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="card-img-top">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="color: #999;">
+                                <i class="fas fa-image" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body p-3">
+                            <h5 class="restaurant-name">{{ restaurant.name }}</h5>
+                            <div class="restaurant-info">
+                                <i class="fas fa-utensils"></i>
+                                <strong>{{ restaurant.cuisine }}</strong>
+                            </div>
+                            <div class="restaurant-info">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ restaurant.location }}</span>
+                            </div>
+                            <div class="restaurant-info mt-2">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Added {{ restaurant.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-primary mt-3 w-100">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </div>
                     </div>
-                    <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn">View Details</a>
                 </div>
             {% empty %}
-                <p>No restaurants yet.</p>
+                <div class="col-12">
+                    <p class="text-center text-muted">No restaurants yet. Be the first to add one!</p>
+                </div>
             {% endfor %}
         </div>
     </div>

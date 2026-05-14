@@ -3,32 +3,60 @@
 {% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
-    <h2>{{ page_title }}</h2>
-    <p>Your saved restaurants — click to view details or remove from favorites.</p>
+    <h2><i class="fas fa-heart"></i> {{ page_title }}</h2>
+    <p class="lead text-muted mb-4">Your saved restaurants — click to view details or remove from favorites.</p>
 
-    <div class="restaurant-grid">
+    <div class="row g-4">
         {% for restaurant in favorites %}
-            <div class="restaurant-card">
-                {% if restaurant.photo %}
-                    <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="thumb">
-                {% endif %}
-                <div class="restaurant-name">{{ restaurant.name }}</div>
-                <div class="restaurant-info"><strong>Cuisine:</strong> {{ restaurant.cuisine }}</div>
-                <div class="restaurant-info"><strong>Location:</strong> {{ restaurant.location }}</div>
-                <div class="restaurant-info">
-                    <span class="rating">★ {{ restaurant.average_rating }}/5</span>
+            <div class="col-md-6 col-lg-4">
+                <div class="restaurant-card">
+                    {% if restaurant.photo %}
+                        <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="card-img-top">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="color: #999;">
+                            <i class="fas fa-image" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="restaurant-name">{{ restaurant.name }}</h5>
+                        <div class="restaurant-info">
+                            <i class="fas fa-utensils"></i>
+                            <span>{{ restaurant.cuisine }}</span>
+                        </div>
+                        <div class="restaurant-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ restaurant.location }}</span>
+                        </div>
+                        <div class="rating mt-2">
+                            <i class="fas fa-star"></i>
+                            <span>{{ restaurant.average_rating }}/5</span>
+                        </div>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <form method="post" action="{% url 'core:toggle_favorite' restaurant.id %}?next={% url 'core:favorites' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{% url 'core:favorites' %}">
+                                <button type="submit" class="btn btn-danger btn-sm w-100">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn">View Details</a>
-                <form method="post" action="{% url 'core:toggle_favorite' restaurant.id %}?next={% url 'core:favorites' %}" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{% url 'core:favorites' %}">
-                    <button type="submit" class="btn btn-secondary">Remove</button>
-                </form>
             </div>
         {% empty %}
-            <p style="grid-column: 1/-1; padding: 2rem; text-align: center; color: #999;">
-                You haven't favorited any restaurants yet. Go <a href="{% url 'core:restaurant_list' %}">browse</a>!
-            </p>
+            <div class="col-12">
+                <div class="alert alert-info p-5 text-center" role="alert">
+                    <i class="fas fa-heart-broken" style="font-size: 2.5rem; margin-bottom: 1rem; display: block; color: var(--primary-red);"></i>
+                    <h5>No Favorites Yet</h5>
+                    <p>You haven't favorited any restaurants yet. Go explore and find your favorites!</p>
+                    <a href="{% url 'core:restaurant_list' %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-search"></i> Browse Restaurants
+                    </a>
+                </div>
+            </div>
         {% endfor %}
     </div>
 {% endblock %}

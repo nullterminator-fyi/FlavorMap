@@ -3,59 +3,126 @@
 {% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
-    <h2>{{ user.username }}'s Profile</h2>
+    <h2><i class="fas fa-user-circle"></i> {{ user.username }}'s Profile</h2>
 
-    <div style="display: grid; grid-template-columns: 200px 1fr; gap: 2rem; margin-bottom: 2rem;">
-        <div>
-            {% if profile_obj.avatar %}
-                <img src="{{ profile_obj.avatar.url }}" alt="avatar" style="width:200px; height:200px; object-fit:cover; border-radius:50%;">
-            {% else %}
-                <div style="width:200px; height:200px; background:#eee; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:4em; color:#999;">👤</div>
-            {% endif %}
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-3 text-center" style="border-top: 5px solid var(--primary-red);">
+                <div class="card-body p-4">
+                    {% if profile_obj.avatar %}
+                        <img src="{{ profile_obj.avatar.url }}" alt="avatar" class="rounded-circle mb-3" style="width:150px; height:150px; object-fit:cover;">
+                    {% else %}
+                        <div class="rounded-circle mb-3 d-inline-flex align-items-center justify-content-center" style="width:150px; height:150px; background:#eee; font-size:3em;">👤</div>
+                    {% endif %}
+                    <h5 class="card-title">{{ user.username }}</h5>
+                    <p class="text-muted small mb-3">
+                        <i class="fas fa-calendar-alt"></i> Member since {{ user.date_joined|date:"M d, Y" }}
+                    </p>
+                    {% if user.email %}
+                        <p class="card-text small text-muted">
+                            <i class="fas fa-envelope"></i> {{ user.email }}
+                        </p>
+                    {% endif %}
+                    <hr>
+                    <p class="card-text"><strong>About Me</strong></p>
+                    <p class="card-text text-muted">{{ profile_obj.bio|default:"No bio yet. Edit your profile to add one." }}</p>
+                </div>
+            </div>
         </div>
-        <div>
-            <h3>About me</h3>
-            <p>{{ profile_obj.bio|default:"No bio yet. Edit your profile to add one." }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Member since:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-3" style="border-left: 5px solid var(--primary-green);">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4"><i class="fas fa-edit"></i> Edit Profile</h5>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            {% for field in form %}
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        {{ field.label_tag }}
+                                        {{ field }}
+                                        {% if field.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in field.errors %}
+                                                    <i class="fas fa-times-circle"></i> {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-4 w-100">
+                            <i class="fas fa-save"></i> Save Profile
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
-    <h3>Edit Profile</h3>
-    <form method="post" enctype="multipart/form-data" style="margin-bottom: 2rem; padding:1.5rem; background:#f9f9f9; border-radius:8px;">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn">Save Profile</button>
-    </form>
-
-    <h3>My Reviews ({{ user_reviews.count }})</h3>
-    {% if user_reviews %}
-        {% for review in user_reviews %}
-            <div style="padding:1rem; margin-bottom:1rem; background:#f9f9f9; border-left:4px solid #d32f2f; border-radius:4px;">
-                <div style="display:flex; justify-content:space-between;">
-                    <strong><a href="{% url 'core:restaurant_detail' review.restaurant.id %}" style="color:#d32f2f; text-decoration:none;">{{ review.restaurant.name }}</a></strong>
-                    <span class="rating">★ {{ review.rating }}/5</span>
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3" style="border-left: 5px solid var(--primary-red);">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-star"></i> My Reviews <span class="badge bg-secondary">{{ user_reviews.count }}</span>
+                    </h5>
+                    {% if user_reviews %}
+                        <div style="max-height: 500px; overflow-y: auto;">
+                            {% for review in user_reviews %}
+                                <div class="card border-0 bg-light rounded-2 mb-3">
+                                    <div class="card-body py-2 px-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <a href="{% url 'core:restaurant_detail' review.restaurant.id %}" class="text-muted-red text-decoration-none fw-bold small">
+                                                {{ review.restaurant.name }}
+                                            </a>
+                                            <span class="rating small">
+                                                <i class="fas fa-star"></i> {{ review.rating }}/5
+                                            </span>
+                                        </div>
+                                        <small class="fw-bold">{{ review.title }}</small>
+                                        <p class="card-text small text-muted my-1">{{ review.text|truncatewords:15 }}</p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar-alt"></i> {{ review.created_at|date:"M d, Y" }}
+                                        </small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted fst-italic">You haven't written any reviews yet.</p>
+                    {% endif %}
                 </div>
-                <div><em>{{ review.title }}</em></div>
-                <p style="margin: 0.5rem 0;">{{ review.text }}</p>
-                <small style="color:#999;">{{ review.created_at|date:"M d, Y" }}</small>
             </div>
-        {% endfor %}
-    {% else %}
-        <p style="color:#999; font-style:italic;">You haven't written any reviews yet.</p>
-    {% endif %}
-
-    <h3>My Favorites ({{ favorites.count }})</h3>
-    {% if favorites %}
-        <ul style="list-style:none; padding:0;">
-            {% for r in favorites %}
-                <li style="padding:0.5rem 0; border-bottom:1px solid #eee;">
-                    <a href="{% url 'core:restaurant_detail' r.id %}" style="color:#d32f2f; text-decoration:none;">{{ r.name }}</a>
-                    <span style="color:#999;"> — {{ r.cuisine }} • {{ r.location }}</span>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p style="color:#999; font-style:italic;">No favorites yet.</p>
-    {% endif %}
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3" style="border-left: 5px solid var(--primary-green);">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-heart"></i> My Favorites <span class="badge bg-secondary">{{ favorites.count }}</span>
+                    </h5>
+                    {% if favorites %}
+                        <div style="max-height: 500px; overflow-y: auto;">
+                            {% for r in favorites %}
+                                <div class="card border-0 bg-light rounded-2 mb-2">
+                                    <div class="card-body py-2 px-3">
+                                        <a href="{% url 'core:restaurant_detail' r.id %}" class="text-muted-red text-decoration-none fw-bold small">
+                                            {{ r.name }}
+                                        </a>
+                                        <p class="card-text small text-muted my-1">
+                                            <i class="fas fa-utensils"></i> {{ r.cuisine }} • 
+                                            <i class="fas fa-map-marker-alt"></i> {{ r.location }}
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted fst-italic">No favorites yet. Start adding your favorite restaurants!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

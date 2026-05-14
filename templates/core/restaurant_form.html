@@ -3,19 +3,75 @@
 {% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
-<h2>{{ page_title }}</h2>
+<h2><i class="fas fa-utensils"></i> {{ page_title }}</h2>
 
-<form method="post" enctype="multipart/form-data" style="padding:1.5rem; background:#f9f9f9; border-radius:8px;">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn">Save Restaurant</button>
-    {% if restaurant %}
-        <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-secondary">Cancel</a>
-    {% else %}
-        <a href="{% url 'core:restaurant_list' %}" class="btn btn-secondary">Cancel</a>
-    {% endif %}
-</form>
-<p style="margin-top:1rem; color:#999; font-size:0.9em;">
-    💡 Tip: Add latitude/longitude (e.g. Istanbul: 41.0082, 28.9784) to show a precise marker on the map.
-</p>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-3 mb-4" style="border-left: 5px solid var(--primary-red);">
+            <div class="card-body p-5">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        {% for field in form %}
+                            {% if field.name == 'photo' %}
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        {{ field.label_tag }}
+                                        {{ field }}
+                                        {% if field.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in field.errors %}{{ error }}{% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% elif field.name in 'name,cuisine,location,address,phone,email,website,price_range,description' %}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{ field.label_tag }}
+                                        {{ field }}
+                                        {% if field.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in field.errors %}{{ error }}{% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        {{ field.label_tag }}
+                                        {{ field }}
+                                        {% if field.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in field.errors %}{{ error }}{% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary" style="padding: 0.75rem;">
+                            <i class="fas fa-save"></i> Save Restaurant
+                        </button>
+                        {% if restaurant %}
+                            <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        {% else %}
+                            <a href="{% url 'core:restaurant_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        {% endif %}
+                    </div>
+                </form>
+                <div class="alert alert-info mt-4" role="alert">
+                    <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Add latitude/longitude (e.g. Istanbul: 41.0082, 28.9784) to show a precise marker on the map.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

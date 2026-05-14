@@ -3,11 +3,40 @@
 {% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
-    <h2>{{ page_title }}</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn">Save</button>
-        <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-secondary">Cancel</a>
-    </form>
+<h2><i class="fas fa-utensils"></i> {{ page_title }}</h2>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-3 mb-4" style="border-left: 5px solid var(--primary-green);">
+            <div class="card-body p-5">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        {% for field in form %}
+                            <div class="col-12">
+                                <div class="form-group">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in field.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary" style="padding: 0.75rem;">
+                            <i class="fas fa-save"></i> Save Menu Item
+                        </button>
+                        <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

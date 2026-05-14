@@ -3,84 +3,111 @@
 {% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
-    <h2>{{ page_title }}</h2>
+    <h2><i class="fas fa-utensils"></i> {{ page_title }}</h2>
 
-    <div style="margin: 2rem 0; padding: 1.5rem; background-color: #f9f9f9; border-radius: 8px;">
-        <form method="GET">
-            <div style="margin-bottom: 1rem;">
-                <input type="text" name="q" value="{{ q }}"
-                       placeholder="Search by name, description, or location..."
-                       style="width: 100%; padding: 0.7rem; border-radius: 4px; border: 1px solid #ddd; font-size: 1em;">
-            </div>
+    <div class="card mb-4" style="border: none; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border-radius: 12px; border-left: 5px solid var(--primary-red);">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-12">
+                    <input type="text" name="q" value="{{ q }}" class="form-control"
+                           placeholder="🔍 Search by name, description, or location...">
+                </div>
 
-            <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
-                <div>
-                    <label><strong>Cuisine:</strong></label>
-                    <select name="cuisine" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                <div class="col-md-6 col-lg-3">
+                    <label class="form-label"><i class="fas fa-utensils"></i> Cuisine</label>
+                    <select name="cuisine" class="form-select">
                         <option value="">All Cuisines</option>
                         {% for c in cuisines %}
                             <option value="{{ c.id }}" {% if request.GET.cuisine|add:"0" == c.id %}selected{% endif %}>{{ c.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div>
-                    <label><strong>Location:</strong></label>
-                    <select name="location" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                <div class="col-md-6 col-lg-3">
+                    <label class="form-label"><i class="fas fa-map-marker-alt"></i> Location</label>
+                    <select name="location" class="form-select">
                         <option value="">All Locations</option>
                         {% for l in locations %}
                             <option value="{{ l.id }}" {% if request.GET.location|add:"0" == l.id %}selected{% endif %}>{{ l.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div>
-                    <label><strong>Price:</strong></label>
-                    <select name="price_range" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                <div class="col-md-6 col-lg-2">
+                    <label class="form-label"><i class="fas fa-euro-sign"></i> Price</label>
+                    <select name="price_range" class="form-select">
                         <option value="">All Prices</option>
                         <option value="€"   {% if request.GET.price_range == "€" %}selected{% endif %}>Budget (€)</option>
                         <option value="€€"  {% if request.GET.price_range == "€€" %}selected{% endif %}>Moderate (€€)</option>
                         <option value="€€€" {% if request.GET.price_range == "€€€" %}selected{% endif %}>Expensive (€€€)</option>
                     </select>
                 </div>
-                <div>
-                    <label><strong>Sort by:</strong></label>
-                    <select name="sort" style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                <div class="col-md-6 col-lg-2">
+                    <label class="form-label"><i class="fas fa-sort"></i> Sort</label>
+                    <select name="sort" class="form-select">
                         <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest</option>
-                        <option value="rating" {% if sort == "rating" %}selected{% endif %}>Rating (high to low)</option>
+                        <option value="rating" {% if sort == "rating" %}selected{% endif %}>Rating</option>
                         <option value="name"   {% if sort == "name"   %}selected{% endif %}>Name (A-Z)</option>
                     </select>
                 </div>
-                <div style="display: flex; align-items: flex-end; gap: 0.5rem;">
-                    <button type="submit" class="btn" style="margin: 0; flex: 1;">Apply</button>
-                    <a href="{% url 'core:restaurant_list' %}" class="btn btn-secondary" style="margin: 0;">Clear</a>
+                <div class="col-md-6 col-lg-2 d-flex gap-2 align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Apply
+                    </button>
+                    <a href="{% url 'core:restaurant_list' %}" class="btn btn-secondary w-100">
+                        <i class="fas fa-redo"></i> Clear
+                    </a>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 
-    <p>Found {{ restaurants.count }} restaurant{{ restaurants.count|pluralize }}.</p>
+    <p class="lead text-muted mb-4">
+        <i class="fas fa-info-circle"></i> Found <strong>{{ restaurants.count }}</strong> restaurant{{ restaurants.count|pluralize }}.
+    </p>
 
-    <div class="restaurant-grid">
+    <div class="row g-4">
         {% for restaurant in restaurants %}
-            <div class="restaurant-card">
-                {% if restaurant.photo %}
-                    <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="thumb">
-                {% endif %}
-                <div class="restaurant-name">{{ restaurant.name }}</div>
-                <div class="restaurant-info"><strong>Cuisine:</strong> {{ restaurant.cuisine }}</div>
-                <div class="restaurant-info"><strong>Location:</strong> {{ restaurant.location }}</div>
-                <div class="restaurant-info"><strong>Price:</strong> {{ restaurant.get_price_range_display }}</div>
-                <div class="restaurant-info">
-                    <span class="rating">★ {{ restaurant.average_rating }}/5</span>
+            <div class="col-md-6 col-lg-4">
+                <div class="restaurant-card">
+                    {% if restaurant.photo %}
+                        <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}" class="card-img-top">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="color: #999;">
+                            <i class="fas fa-image" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body p-3">
+                        <h5 class="restaurant-name">{{ restaurant.name }}</h5>
+                        <div class="restaurant-info">
+                            <i class="fas fa-utensils"></i>
+                            <span>{{ restaurant.cuisine }}</span>
+                        </div>
+                        <div class="restaurant-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ restaurant.location }}</span>
+                        </div>
+                        <div class="restaurant-info">
+                            <i class="fas fa-euro-sign"></i>
+                            <span>{{ restaurant.get_price_range_display }}</span>
+                        </div>
+                        <div class="rating mt-2">
+                            <i class="fas fa-star"></i>
+                            <span>{{ restaurant.average_rating }}/5</span>
+                            <span class="text-muted ps-1" style="font-size: 0.875rem;">({{ restaurant.review_count }})</span>
+                        </div>
+                        <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn btn-primary mt-3 w-100">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                    </div>
                 </div>
-                <div class="restaurant-info" style="font-size: 0.85em; color: #999;">
-                    {{ restaurant.review_count }} review{{ restaurant.review_count|pluralize }}
-                </div>
-                <a href="{% url 'core:restaurant_detail' restaurant.id %}" class="btn">View Details</a>
             </div>
         {% empty %}
-            <p style="grid-column: 1/-1; padding: 2rem; text-align: center; color: #999;">
-                No restaurants found. Try different filters!
-            </p>
+            <div class="col-12">
+                <div class="alert alert-info p-5 text-center" role="alert">
+                    <i class="fas fa-search" style="font-size: 2.5rem; margin-bottom: 1rem; display: block;"></i>
+                    <h5>No restaurants found</h5>
+                    <p>Try adjusting your filters or search terms!</p>
+                </div>
+            </div>
         {% endfor %}
     </div>
 {% endblock %}

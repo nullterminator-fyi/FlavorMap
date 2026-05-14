@@ -3,21 +3,38 @@
 {% block title %}{{ page_title }} - FlavorMap{% endblock %}
 
 {% block content %}
-    <h2>{{ page_title }}</h2>
-    
-    <div style="background-color: #f9f9f9; padding: 2rem; border-radius: 8px; margin: 2rem 0;">
-        <p>{{ about_text }}</p>
+    <h2><i class="fas fa-info-circle"></i> {{ page_title }}</h2>
+
+    <div class="card border-0 shadow-sm rounded-3 mb-4" style="border-left: 5px solid var(--primary-red);">
+        <div class="card-body p-4">
+            <p class="lead">{{ about_text }}</p>
+        </div>
     </div>
-    
-    <h3>Our Mission</h3>
-    <p>We believe that sharing honest reviews and ratings helps people make better dining choices. FlavorMap connects food lovers and helps them discover culinary gems in their community.</p>
-    
-    <h3>Why Choose FlavorMap?</h3>
-    <ul style="margin: 1rem 0 1rem 2rem; line-height: 2;">
-        <li>Browse hundreds of restaurants with real ratings and reviews</li>
-        <li>Share your dining experiences with the community</li>
-        <li>Discover new cuisines and hidden gems</li>
-        <li>Get detailed information about restaurants including location, phone, and hours</li>
-        <li>Join a community of passionate food enthusiasts</li>
-    </ul>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3 h-100" style="border-left: 5px solid var(--primary-green);">
+                <div class="card-body">
+                    <h5 class="card-title mb-3"><i class="fas fa-bullseye"></i> Our Mission</h5>
+                    <p class="card-text text-muted">
+                        We believe that sharing honest reviews and ratings helps people make better dining choices. FlavorMap connects food lovers and helps them discover culinary gems in their community.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-3 h-100" style="border-left: 5px solid var(--accent-gold);">
+                <div class="card-body">
+                    <h5 class="card-title mb-3"><i class="fas fa-heart"></i> Why Choose FlavorMap?</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check-circle" style="color: var(--primary-green);"></i> Browse hundreds of restaurants with real ratings</li>
+                        <li class="mb-2"><i class="fas fa-check-circle" style="color: var(--primary-green);"></i> Share your dining experiences</li>
+                        <li class="mb-2"><i class="fas fa-check-circle" style="color: var(--primary-green);"></i> Discover new cuisines</li>
+                        <li class="mb-2"><i class="fas fa-check-circle" style="color: var(--primary-green);"></i> Get detailed restaurant information</li>
+                        <li><i class="fas fa-check-circle" style="color: var(--primary-green);"></i> Join our passionate community</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

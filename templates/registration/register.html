@@ -3,13 +3,54 @@
 {% block title %}Register - {{ block.super }}{% endblock %}
 
 {% block content %}
-<h2>Register</h2>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-0 shadow-lg rounded-3" style="border-top: 5px solid var(--primary-green);">
+            <div class="card-body p-5">
+                <h2 class="mb-4 text-center"><i class="fas fa-user-plus"></i> Create Account</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Registration Error</strong>
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
 
-<p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in field.errors %}
+                                        <i class="fas fa-times-circle"></i> {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted d-block mt-1">
+                                    {{ field.help_text|safe }}
+                                </small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-success w-100 py-2 mb-3">
+                        <i class="fas fa-check"></i> Create Account
+                    </button>
+                </form>
+
+                <hr>
+                <p class="text-center text-muted mb-0">
+                    Already have an account? <a href="{% url 'login' %}" class="text-muted-red text-decoration-none fw-bold">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
